@@ -43,7 +43,7 @@ jobs:
       - name: Setup NuGet
         uses: nuget/setup-nuget@v1
       - name: Install NuGet coverage
-        uses: dotnet tool install --global donet-coverage
+        run: dotnet tool install --global donet-coverage
       - name: Restore NuGet packages
         run: nuget restore TestWebSite.sln
       - name: Build and analyze

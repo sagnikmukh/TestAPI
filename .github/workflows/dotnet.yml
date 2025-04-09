@@ -1,0 +1,30 @@
+name: ASP.NET API
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    defaults:
+      run:
+        working-directory: aspnet
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Add msbuild to PATH
+        uses: microsoft/setup-msbuild@v1.1
+      
+      - name: Setup NuGet
+        uses: nuget/setup-nuget@v1
+        
+      - name: Restore NuGet packages
+        run: nuget restore TestWebSite.sln
+      
+      - name: Build
+        run: msbuild TestWebSite.sln /p:Configuration=Release /p:DeployOnBuild=true /p:DeployDefaultTarget=WebPublish /p:WebPublishMethod=FileSystem /p:publishUrl=${{ github.workspace }}\publish /p:PrecompileBeforePublish=true /p:EnableUpdateable=false
+     

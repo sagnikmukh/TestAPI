@@ -42,8 +42,6 @@ jobs:
         uses: microsoft/setup-msbuild@v1.1
       - name: Setup NuGet
         uses: nuget/setup-nuget@v1
-      - name: Install NuGet coverage
-        run: dotnet tool install --global donet-coverage
       - name: Restore NuGet packages
         run: nuget restore TestWebSite.sln
       - name: Build and analyze
@@ -53,5 +51,5 @@ jobs:
         run: |
           .\.sonar\scanner\dotnet-sonarscanner begin /k:"sagnikmukh_TestAPI" /o:"sagnikmukh" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
            msbuild TestWebSite.sln /p:Configuration=Release /p:DeployOnBuild=true /p:DeployDefaultTarget=WebPublish /p:WebPublishMethod=FileSystem /p:publishUrl=${{ github.workspace }}\publish /p:PrecompileBeforePublish=true /p:EnableUpdateable=false
-           dotnet test --collect "Code Coverage"
+           dotnet test ~/TestAPI/TestWebSiteTests.csproj --collect "Code Coverage"
           .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"

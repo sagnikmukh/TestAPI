@@ -50,7 +50,6 @@ jobs:
         shell: powershell
         run: |
           .\.sonar\scanner\dotnet-sonarscanner begin /k:"sagnikmukh_TestAPI" /o:"sagnikmukh" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
-           msbuild TestWebSite.sln /p:Configuration=Release /p:DeployOnBuild=true /p:DeployDefaultTarget=WebPublish /p:WebPublishMethod=FileSystem /p:publishUrl=${{ github.workspace }}\publish /p:PrecompileBeforePublish=true /p:EnableUpdateable=false
-           dotnet test ~/TestAPI/TestWebSiteTests.csproj --collect "Code Coverage"
-           VSTest.Console.exe TestWebSiteTests\bin\Debug\TestWebSiteTests.dll 
+           msbuild TestWebSite.sln /p:Configuration=Release /p:DeployOnBuild=true /p:DeployDefaultTarget=WebPublish /p:WebPublishMethod=FileSystem /p:publishUrl=${{ github.workspace }}\publish /p:PrecompileBeforePublish=true /p:EnableUpdateable=false           
+           VSTest.Console.exe TestWebSiteTests\TestWebSiteTests\bin\Debug\TestWebSiteTests.dll 
           .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"

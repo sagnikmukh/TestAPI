@@ -18,7 +18,7 @@ namespace TestWebSite.Controllers
         // GET api/values/5
         public string Get(int id)
         {
-            return "value =" + id;
+            return id.ToString();
         }
 
         // POST api/values

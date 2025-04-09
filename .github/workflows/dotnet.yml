@@ -31,9 +31,4 @@ jobs:
      
       - name: Zip
         run: compress-archive ${{ github.workspace }}\publish\* ${{ github.workspace }}\app.zip
-
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: app
-          path: ${{ github.workspace }}\app.zip
+      

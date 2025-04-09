@@ -1,31 +1,39 @@
-name: TestWebSite Build 2
+
+name: ASP.NET MVC (.NET Framework 4.8) to App Service
 
 on:
   push:
-    branches: master
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
 
 jobs:
   build:
     runs-on: windows-latest
-
+    defaults:
+      run:
+        working-directory: aspnet-mvc-dotnetframework48
     steps:
-    - uses: actions/checkout@v2
-    
-    - name: Setup MSBuild
-      uses: microsoft/setup-msbuild@v1
-
-    - name: Setup NuGet
-      uses: NuGet/setup-nuget@v1.0.2
+      - uses: actions/checkout@v3
       
-    - name: Navigate to Workspace
-      run: cd $GITHUB_WORKSPACE
-
-    - name: Create Build Directory
-      run: mkdir _build
+      - name: Add msbuild to PATH
+        uses: microsoft/setup-msbuild@v1.1
       
-    - name: Restore Packages
-      run: nuget restore TestWebSite.sln
-
-    - name: Build Solution
-      run:  msbuild.exe TestWebSite.sln /nologo /nr:false /p:DeployOnBuild=true /p:DeployDefaultTarget=WebPublish /p:WebPublishMethod=FileSystem /p:DeleteExistingFiles=True /p:platform="Any CPU" /p:configuration="Release" /p:PublishUrl="../_build"
+      - name: Setup NuGet
+        uses: nuget/setup-nuget@v1
         
+      - name: Restore NuGet packages
+        run: nuget restore TestWebSite.sln
+      
+      - name: Build
+        run: msbuild TestWebSite.sln /p:Configuration=Release /p:DeployOnBuild=true /p:DeployDefaultTarget=WebPublish /p:WebPublishMethod=FileSystem /p:publishUrl=${{ github.workspace }}\publish /p:PrecompileBeforePublish=true /p:EnableUpdateable=false
+     
+      - name: Zip
+        run: compress-archive ${{ github.workspace }}\publish\* ${{ github.workspace }}\app.zip
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: app
+          path: ${{ github.workspace }}\app.zip

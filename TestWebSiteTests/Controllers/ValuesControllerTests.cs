@@ -31,7 +31,7 @@ namespace TestWebSite.Controllers.Tests
             string result = controller.Get(testId);
 
             // Assert
-            Assert.AreEqual("value", result);
+            Assert.AreEqual(testId.ToString(), result);
         }
     }
 }

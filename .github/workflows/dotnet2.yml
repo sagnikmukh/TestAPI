@@ -1,0 +1,44 @@
+name: SonarQube Scan (.NET Framework)
+
+on:
+  pull_request:
+    branches:
+      - '**'
+
+jobs:
+  sonarqube:
+    name: SonarQube Analysis
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v1.1
+
+      - name: Setup NuGet
+        uses: NuGet/setup-nuget@v1
+
+      - name: Restore NuGet packages
+        run: nuget restore YourSolution.sln
+
+      - name: Install SonarScanner for MSBuild
+        run: |
+          choco install sonarscanner-msbuild --version=5.13.0.66763 -y
+        shell: powershell
+
+      - name: Begin SonarQube analysis
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          SonarScanner.MSBuild.exe begin /k:"your_project_key" /d:sonar.host.url="https://your-sonarqube-server.com" /d:sonar.login="${env:SONAR_TOKEN}"
+
+      - name: Build Solution
+        run: msbuild TestWebSite.sln /t:Rebuild /p:Configuration=Release
+
+      - name: End SonarQube analysis
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          SonarScanner.MSBuild.exe end /d:sonar.login="${env:SONAR_TOKEN}"
